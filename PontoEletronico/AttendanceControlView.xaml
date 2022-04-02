@@ -5,9 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AttendanceControl"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="323" Loaded="Window_Loaded" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="{x:Null}">
+    <Window.DataContext>
+        <local:AttendanceControlViewModel/>
+    </Window.DataContext>
     <Grid>
-        <Grid x:Name="Grid_main" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid x:Name="Grid_main" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="Grid_main_MouseDown">
             <Grid.Effect>
                 <DropShadowEffect ShadowDepth="7" BlurRadius="19"/>
             </Grid.Effect>
@@ -84,12 +87,14 @@
                             </LinearGradientBrush>
                         </Border.Background>
                         <Grid x:Name="Grid_display" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="15,15,15,30" Background="#FF72CEFF">
-                            <Grid x:Name="Grid_home" HorizontalAlignment="Stretch">
+                            <Grid x:Name="Grid_home" Visibility="{Binding HomeScreenVisibility}" HorizontalAlignment="Stretch">
                                 <TextBlock Text="" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="24" Margin="0,-3,3,0"/>
-                                <TextBlock Text="00:00" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" FontWeight="Normal" Margin="0,-50,0,0"/>
-                                <TextBlock Text="Last entry: 0000/00/00 00:00" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,93,0,0"/>
+                                <TextBlock x:Name="TextBlock_time" Text="00:00" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="48" FontWeight="Normal" Margin="0,5,0,0"/>
+                                <TextBlock x:Name="TextBlock_date" Text="_" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,62,0,0"/>
+                                <TextBlock Text="{Binding LastEntryDate}" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,93,0,0"/>
+                                <Image Source="/Assets/Images/fingerprint_icon.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="30" Margin="0,0,0,5" RenderOptions.BitmapScalingMode="HighQuality"/>
                             </Grid>
-                            <Grid x:Name="Grid_identificado"></Grid>
+                            <Grid x:Name="Grid_identificado" Visibility="{Binding EntryScreenVisibility}"></Grid>
                         </Grid>
                     </Border>
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,15">

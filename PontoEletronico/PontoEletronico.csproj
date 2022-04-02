@@ -98,6 +98,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Assets\Images\fingerprint_icon.png" />
+    <Resource Include="Assets\Images\fingerprint_icon_hd.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Images\ws4_right_bottomDemo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

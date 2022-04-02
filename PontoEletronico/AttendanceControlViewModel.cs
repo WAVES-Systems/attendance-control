@@ -1,4 +1,5 @@
-﻿using AttendanceControl.Repository;
+﻿using AttendanceControl.Models;
+using AttendanceControl.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,10 +13,11 @@ namespace AttendanceControl
 {
     public class AttendanceControlViewModel : INotifyPropertyChanged
     {
-        private AttendanceEntryRepository attendanceEntryRepository;
+        private AttendanceEntryRepository _attendanceEntryRepository;
+        private AttendanceEntry _lastAttendanceEntry;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string EmployeeName => attendanceEntryRepository.Name;
+        public string EmployeeName => _attendanceEntryRepository.Name;
 
         public Visibility _homeScreenVisibility = Visibility.Visible;
         public Visibility HomeScreenVisibility
@@ -39,9 +41,27 @@ namespace AttendanceControl
             }
         }
 
+        public string _lastEntryDate = " ";
+        public string LastEntryDate
+        {
+            get => _lastEntryDate;
+            set
+            {
+                _lastEntryDate = value;
+                OnPropertyChanged();
+            }
+        }
+
         public AttendanceControlViewModel()
         {
-            attendanceEntryRepository = new AttendanceEntryRepository();
+            _attendanceEntryRepository = new AttendanceEntryRepository();
+        }
+
+        public void GetLastEntry()
+        {
+            _lastAttendanceEntry = _attendanceEntryRepository.GetLastAttendanceEntry();
+            if(_lastAttendanceEntry != null)
+                LastEntryDate = $"Last Entry: {_lastAttendanceEntry.Timestamp:HH:mm D}";
         }
 
         private void OnPropertyChanged([CallerMemberName] string name = null)
