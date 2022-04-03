@@ -13,6 +13,7 @@ namespace AttendanceControl.Repository
     {
         private string DatabaseFileName => "database.csv";
         private string Separator => ",";
+        public AttendanceEntry LastAttendanceEntry { get; set; }
 
         /// <summary>
         /// Gets a value that represents the name of the current logged user.

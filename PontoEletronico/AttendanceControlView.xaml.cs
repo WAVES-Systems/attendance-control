@@ -1,6 +1,7 @@
 ﻿using AttendanceControl.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,7 @@ namespace AttendanceControl
             _viewModel.HomeScreenVisibility = Visibility.Visible;
             Retangle_Fingerprint.Visibility = Visibility.Visible;
             _entryDisplayCount.IsEnabled = true;
+            Retangle_Fingerprint.Focus();
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -60,11 +62,25 @@ namespace AttendanceControl
             _viewModel.GetLastEntry();
             _viewModel.EntryScreenVisibility = Visibility.Collapsed;
             _viewModel.HomeScreenVisibility = Visibility.Visible;
-            Retangle_Fingerprint.Focusable = true;
-            Retangle_Fingerprint.Focus();
         }
 
         private void Retangle_Fingerprint_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+
+
+        }
+
+        private void Grid_main_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
+            Retangle_Fingerprint.Focus();
+        }
+
+        private void Retangle_Fingerprint_Click(object sender, RoutedEventArgs e)
         {
             _entryDisplayCount.IsEnabled = false;
             _viewModel.EntryScreenVisibility = Visibility.Collapsed;
@@ -73,12 +89,11 @@ namespace AttendanceControl
             _viewModel.EntryScreenVisibility = Visibility.Visible;
             _entryDisplayCount.Start();
             Retangle_Fingerprint.Visibility = Visibility.Collapsed;
-
         }
 
-        private void Grid_main_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Button_openData_Click(object sender, RoutedEventArgs e)
         {
-            this.DragMove();
+            Process.Start("excel.exe","database.csv");
         }
     }
 }

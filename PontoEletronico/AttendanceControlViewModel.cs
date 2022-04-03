@@ -16,11 +16,10 @@ namespace AttendanceControl
         private AttendanceEntryRepository _attendanceEntryRepository;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private AttendanceEntry _lastAttendanceEntry;
         public AttendanceEntry LastAttendanceEntry
         {
-            get { return _lastAttendanceEntry; }
-            set { _lastAttendanceEntry = value; }
+            get => _attendanceEntryRepository?.LastAttendanceEntry;
+            set { LastAttendanceEntry = value; }
         }
 
         public string EmployeeName => _attendanceEntryRepository.Name;
