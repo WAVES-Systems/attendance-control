@@ -11,13 +11,13 @@ namespace AttendanceControl.Repository
 {
     internal class AttendanceEntryRepository
     {
-        private string DatabaseFileName => "database.db";
+        private string DatabaseFileName => "database.csv";
         private string Separator => ",";
 
         /// <summary>
         /// Gets a value that represents the name of the current logged user.
         /// </summary>
-        public string Name => Environment.UserName;
+        public string Name => System.DirectoryServices.AccountManagement.UserPrincipal.Current.DisplayName;
 
         /// <summary>
         /// Stores a attendance entry in the database file.
@@ -28,7 +28,7 @@ namespace AttendanceControl.Repository
         {
             try
             {
-                if (attendanceEntry != null)
+                if (attendanceEntry == null)
                 {
                     throw new Exception("Input is null!");
                 }
@@ -57,7 +57,8 @@ namespace AttendanceControl.Repository
         {
             try
             {
-                string data = TryRetrieveData();
+                string data = TryRetrieveData().Replace("\"", String.Empty);
+
                 if (string.IsNullOrEmpty(data))
                     return null;
 
@@ -76,7 +77,7 @@ namespace AttendanceControl.Repository
 
                 return attendanceEntry;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return null;
@@ -87,7 +88,7 @@ namespace AttendanceControl.Repository
         /// Retrieve the next Id to be used in the new entry.
         /// </summary>
         /// <returns>A value that represents the next Id.<para/>
-        /// If a new Id cannot be retrieved, -1 is returned.
+        /// If a new Id cannot be retrieved, 0 is returned.
         /// </returns>
         private int GetNextId()
         {
@@ -98,10 +99,10 @@ namespace AttendanceControl.Repository
                 int commaPosition = data.IndexOf(Separator);
                 if (int.TryParse(data.Substring(0, commaPosition), out id))
                 {
-                    return id+1;
+                    return id + 1;
                 }
             }
-            return -1;
+            return 0;
         }
 
         /// <summary>
@@ -114,7 +115,11 @@ namespace AttendanceControl.Repository
             {
                 File.WriteAllText(DatabaseFileName, "");
             }
-            return File.ReadAllLines(DatabaseFileName)[0];
+            var result = File.ReadAllLines(DatabaseFileName);
+            if (result.Any())
+                return result[result.Length-1];
+            else
+                return "";
         }
 
         /// <summary>
@@ -129,7 +134,7 @@ namespace AttendanceControl.Repository
             }
             else
             {
-                File.AppendAllText(DatabaseFileName, Environment.NewLine + data);
+                File.AppendAllText(DatabaseFileName, data+ Environment.NewLine);
             }
         }
 

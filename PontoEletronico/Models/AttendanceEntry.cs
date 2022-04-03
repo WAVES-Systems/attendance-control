@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AttendanceControl.Models
 {
-    internal class AttendanceEntry
+    public class AttendanceEntry
     {
         public int Id { get; set; }
         public DateTime Timestamp { get; set; }

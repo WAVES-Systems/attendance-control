@@ -10,7 +10,7 @@
         <local:AttendanceControlViewModel/>
     </Window.DataContext>
     <Grid>
-        <Grid x:Name="Grid_main" HorizontalAlignment="Center" VerticalAlignment="Center" MouseDown="Grid_main_MouseDown">
+        <Grid x:Name="Grid_main" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.Effect>
                 <DropShadowEffect ShadowDepth="7" BlurRadius="19"/>
             </Grid.Effect>
@@ -69,7 +69,7 @@
                     </LinearGradientBrush>
                 </Border.Background>
                 <Grid>
-                    <Border x:Name="Border_display_background" VerticalAlignment="Top" CornerRadius="10" Height="215">
+                    <Border x:Name="Border_display_background" VerticalAlignment="Top" CornerRadius="10" Height="215" PreviewMouseLeftButtonDown="Grid_main_PreviewMouseLeftButtonDown">
                         <Border.Background>
                             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                 <LinearGradientBrush.RelativeTransform>
@@ -87,18 +87,32 @@
                             </LinearGradientBrush>
                         </Border.Background>
                         <Grid x:Name="Grid_display" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="15,15,15,30" Background="#FF72CEFF">
-                            <Grid x:Name="Grid_home" Visibility="{Binding HomeScreenVisibility}" HorizontalAlignment="Stretch">
-                                <TextBlock Text="" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="24" Margin="0,-3,3,0"/>
-                                <TextBlock x:Name="TextBlock_time" Text="00:00" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="48" FontWeight="Normal" Margin="0,5,0,0"/>
-                                <TextBlock x:Name="TextBlock_date" Text="_" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,62,0,0"/>
-                                <TextBlock Text="{Binding LastEntryDate}" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,93,0,0"/>
-                                <Image Source="/Assets/Images/fingerprint_icon.png" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="30" Margin="0,0,0,5" RenderOptions.BitmapScalingMode="HighQuality"/>
+                            <Grid x:Name="Grid_home" Visibility="{Binding HomeScreenVisibility, Mode=OneWay}" HorizontalAlignment="Stretch">
+                                <StackPanel x:Name="Stackpanel_displayContainer" Orientation="Vertical" Width="225">
+                                    <TextBlock x:Name="TextBlock_time" Text="00:00" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="48" FontWeight="Normal" Margin="0,-5,0,0" TextAlignment="Center"/>
+                                    <TextBlock x:Name="TextBlock_date" Text="Welcome!" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center"/>
+                                    <TextBlock Text="{Binding LastEntryDate, Mode=OneWay}" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" TextWrapping="Wrap" Margin="5,4,5,0" TextAlignment="Center"/>
+                                    <TextBlock x:Name="TextBlock_timeSinceLast" Text="Attendance Control 1.0" FontFamily="Segoe UI" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,4,5,0" TextWrapping="Wrap" TextAlignment="Center"/>
+                                </StackPanel>
+                                <Image Source="/Assets/Images/fingerprint_icon.png" HorizontalAlignment="Center" VerticalAlignment="Top" Width="14" Margin="0,147,0,0" RenderOptions.BitmapScalingMode="HighQuality" Height="18"/>
                             </Grid>
-                            <Grid x:Name="Grid_identificado" Visibility="{Binding EntryScreenVisibility}"></Grid>
+                            <Grid x:Name="Grid_identificado" Visibility="{Binding EntryScreenVisibility, Mode=OneWay}">
+                                <StackPanel Orientation="Vertical" Margin="5,0,5,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding EmployeeName}" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                                    <TextBlock Text="{Binding EntryTypeText}" HorizontalAlignment="Center" Margin="0,10,0,0" TextAlignment="Center"/>
+                                    <TextBlock Text="{Binding EntryTimeSpan}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Margin="0,10,0,0"/>
+                                    <TextBlock Text="{Binding EntryMessage}" HorizontalAlignment="Center" FontWeight="Bold" FontSize="14" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                            <Rectangle Margin="0,177,0,-24" Fill="#FFD8D8D8" Width="53" HorizontalAlignment="Center">
+                                <Rectangle.OpacityMask>
+                                    <ImageBrush ImageSource="/Assets/Images/ws4_right_bottomDemo.png"/>
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
                         </Grid>
                     </Border>
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,15">
-                        <Border CornerRadius="10" Width="80" Height="130" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <Border CornerRadius="10" Width="80" Height="130" VerticalAlignment="Top" HorizontalAlignment="Left" IsHitTestVisible="False">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF151515" Offset="0"/>
@@ -106,7 +120,7 @@
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>
-                        <Border CornerRadius="10" Width="80" Height="100" VerticalAlignment="Bottom">
+                        <Border CornerRadius="10" Width="80" Height="100" VerticalAlignment="Bottom" IsHitTestVisible="False">
                             <Border.Background>
                                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                                     <GradientStop Color="#FF101010"/>
@@ -116,7 +130,28 @@
                                 </LinearGradientBrush>
                             </Border.Background>
                         </Border>
-                        <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,38,10,36" Fill="#FF80FFB7"/>
+                        <Rectangle x:Name="Retangle_Fingerprint_back" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,38,10,36" MouseUp="Retangle_Fingerprint_MouseUp">
+                            <Rectangle.Fill>
+                                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                    <LinearGradientBrush.RelativeTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform CenterY="0.5" CenterX="0.5"/>
+                                            <SkewTransform CenterX="0.5" CenterY="0.5"/>
+                                            <RotateTransform Angle="-70" CenterX="0.5" CenterY="0.5"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </LinearGradientBrush.RelativeTransform>
+                                    <GradientStop Color="#FF353535"/>
+                                    <GradientStop Color="#FF272727" Offset="1"/>
+                                    <GradientStop Color="#FF272727" Offset="0.507"/>
+                                    <GradientStop Color="#FF353535" Offset="0.49"/>
+                                    <GradientStop Color="#FF353535" Offset="0.25"/>
+                                    <GradientStop Color="#FF3A3939" Offset="0.24"/>
+                                    <GradientStop Color="#FF272727" Offset="0.81"/>
+                                </LinearGradientBrush>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <Rectangle x:Name="Retangle_Fingerprint" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,38,10,36" Fill="#FF80FFB7" MouseUp="Retangle_Fingerprint_MouseUp" d:IsHidden="True"/>
                     </Grid>
                 </Grid>
             </Border>
