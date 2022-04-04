@@ -11,7 +11,8 @@ namespace AttendanceControl.Repository
 {
     internal class AttendanceEntryRepository
     {
-        private string DatabaseFileName => "database.csv";
+        private string InternalDatabaseFileName => "database.db";
+        private string FinalDatabaseFileName => "final_report.csv";
         private string Separator => ",";
         public AttendanceEntry LastAttendanceEntry { get; set; }
 
@@ -33,14 +34,13 @@ namespace AttendanceControl.Repository
                 {
                     throw new Exception("Input is null!");
                 }
-                int newId = GetNextId();
-
-                if (newId == -1)
+                attendanceEntry.Id = GetNextId();
+                if (attendanceEntry.EntryType == EntryType.Out)
                 {
-                    throw new Exception("New Id is invalid!");
+                    WriteData(ConvertEntryToLine(LastAttendanceEntry, attendanceEntry),FinalDatabaseFileName);
                 }
-                attendanceEntry.Id = newId;
                 WriteData(ConvertEntryToLine(attendanceEntry));
+                LastAttendanceEntry = attendanceEntry;
                 return attendanceEntry;
             }
             catch (Exception ex)
@@ -112,11 +112,11 @@ namespace AttendanceControl.Repository
         /// <returns>All content from the database file.</returns>
         private string TryRetrieveData()
         {
-            if (!File.Exists(DatabaseFileName))
+            if (!File.Exists(InternalDatabaseFileName))
             {
-                File.WriteAllText(DatabaseFileName, "");
+                File.WriteAllText(InternalDatabaseFileName, "");
             }
-            var result = File.ReadAllLines(DatabaseFileName);
+            var result = File.ReadAllLines(InternalDatabaseFileName);
             if (result.Any())
                 return result[result.Length-1];
             else
@@ -129,13 +129,29 @@ namespace AttendanceControl.Repository
         /// <param name="data">A string that represents the data to be written.</param>
         private void WriteData(string data)
         {
-            if (!File.Exists(DatabaseFileName))
+            if (!File.Exists(InternalDatabaseFileName))
             {
-                File.WriteAllText(DatabaseFileName, data);
+                File.WriteAllText(InternalDatabaseFileName, data);
             }
             else
             {
-                File.AppendAllText(DatabaseFileName, data+ Environment.NewLine);
+                File.AppendAllText(InternalDatabaseFileName, data+ Environment.NewLine);
+            }
+        }
+
+        /// <summary>
+        /// Appends new data to the database file. If the file does not exists, a new file will be created.
+        /// </summary>
+        /// <param name="data">A string that represents the data to be written.</param>
+        private void WriteData(string data, string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, data);
+            }
+            else
+            {
+                File.AppendAllText(filePath, data + Environment.NewLine);
             }
         }
 
@@ -150,6 +166,19 @@ namespace AttendanceControl.Repository
             if (attendanceEntry == null)
                 return null;
             return $"\"{attendanceEntry.Id}\"{Separator}\"{attendanceEntry.Timestamp.ToOADate().ToString(CultureInfo.InvariantCulture)}\"{Separator}\"{Enum.GetName(typeof(EntryType), attendanceEntry.EntryType)}\"";
+        }
+
+        /// <summary>
+        /// Converts two attendance entries into a csv-line to be written in a timekeeping table.
+        /// </summary>
+        /// <param name="inEntry">An object that represents the arrival entry</param>
+        /// <param name="outEntry">An object that represents the departure entry</param>
+        /// <returns>A string that represents the csv line with Date, Time In and Time Out.</returns>
+        private string ConvertEntryToLine(AttendanceEntry inEntry, AttendanceEntry outEntry)
+        {
+            if (inEntry == null)
+                return null;
+            return $"\"{inEntry.Timestamp.ToOADate().ToString(CultureInfo.InvariantCulture)}\"{Separator}\"{inEntry.Timestamp.ToOADate().ToString(CultureInfo.InvariantCulture)}\"{Separator}\"{outEntry.Timestamp.ToOADate().ToString(CultureInfo.InvariantCulture)}\"";
         }
     }
 }

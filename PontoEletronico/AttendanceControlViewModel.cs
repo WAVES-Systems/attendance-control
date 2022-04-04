@@ -19,7 +19,7 @@ namespace AttendanceControl
         public AttendanceEntry LastAttendanceEntry
         {
             get => _attendanceEntryRepository?.LastAttendanceEntry;
-            set { LastAttendanceEntry = value; }
+            set { _attendanceEntryRepository.LastAttendanceEntry = value; }
         }
 
         public string EmployeeName => _attendanceEntryRepository.Name;
@@ -108,10 +108,10 @@ namespace AttendanceControl
 
         public void GetLastEntry()
         {
-            _lastAttendanceEntry = _attendanceEntryRepository.GetLastAttendanceEntry();
-            if (_lastAttendanceEntry != null)
+            LastAttendanceEntry = _attendanceEntryRepository.GetLastAttendanceEntry();
+            if (LastAttendanceEntry != null)
             {
-                LastEntryDate = $"{(_lastAttendanceEntry.EntryType == EntryType.In ? "Arrival" : "Departure")} at {_lastAttendanceEntry.Timestamp:HH:mm}, {_lastAttendanceEntry.Timestamp:d}";
+                LastEntryDate = $"{(LastAttendanceEntry.EntryType == EntryType.In ? "Time In" : "Time Out")} at {LastAttendanceEntry.Timestamp:HH:mm}, {LastAttendanceEntry.Timestamp:d}";
             }
         }
 
@@ -125,14 +125,14 @@ namespace AttendanceControl
             AttendanceEntry attendanceEntry = new AttendanceEntry();
             attendanceEntry.Timestamp = DateTime.Now;
             attendanceEntry.EntryType = EntryType.In;
-            if (_lastAttendanceEntry != null)
+            if (LastAttendanceEntry != null)
             {
-                attendanceEntry.EntryType = _lastAttendanceEntry.EntryType == EntryType.Out ? EntryType.In : EntryType.Out;
+                attendanceEntry.EntryType = LastAttendanceEntry.EntryType == EntryType.Out ? EntryType.In : EntryType.Out;
                 var currentTimePassed = attendanceEntry.Timestamp.Subtract(LastAttendanceEntry.Timestamp);
                 EntryTimeSpan = $"Time span: {currentTimePassed.TotalHours.ToString("00")}:{currentTimePassed.Minutes.ToString("00")}:{currentTimePassed.Seconds.ToString("00")}";
             }
-            _lastAttendanceEntry = _attendanceEntryRepository.Save(attendanceEntry);
-            EntryTypeText = $"{(attendanceEntry.EntryType == EntryType.In ? "Arrival" : "Departure")} registred!{Environment.NewLine}{attendanceEntry.Timestamp:HH:mm}, {attendanceEntry.Timestamp:D}";
+            LastAttendanceEntry = _attendanceEntryRepository.Save(attendanceEntry);
+            EntryTypeText = $"{(attendanceEntry.EntryType == EntryType.In ? "Time In" : "Time Out")} registred!{Environment.NewLine}{attendanceEntry.Timestamp:HH:mm}, {attendanceEntry.Timestamp:D}";
             EntryMessage = $"{(attendanceEntry.EntryType == EntryType.In ? "Welcome!" : "See you!")}";
             GetLastEntry();
         }

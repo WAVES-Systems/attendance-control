@@ -93,7 +93,7 @@ namespace AttendanceControl
 
         private void Button_openData_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start("excel.exe","database.csv");
+            Process.Start("excel.exe", "final_report.csv");
         }
     }
 }
